@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 练习</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            min-height: 50px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JavaScript 练习页面</h1>
+        
+        <p>打开浏览器的开发者工具（按 F12），在 Console 标签页查看输出。</p>
+        
+        <div class="output" id="result">
+            这里会显示结果...
+        </div>
+        
+        <button onclick="runMyCode()">运行代码</button>
+    </div>
+
+    <script>
+        // 在这里编写你的 JavaScript 代码
+        
+        function runMyCode() {
+            // 示例：修改页面上显示的内容
+            let resultDiv = document.getElementById("result");
+            
+            // ========== 在这里写你的代码 ==========
+            
+            // 例如：
+            let message = "Hello, JavaScript!";
+            resultDiv.textContent = message;
+            
+            // 同时在控制台输出
+            console.log(message);
+            
+            // =====================================
+        }
+    </script>
+</body>
+</html>

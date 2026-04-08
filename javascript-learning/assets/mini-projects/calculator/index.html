@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简易计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+        .display {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: right;
+            font-size: 24px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            min-height: 60px;
+            word-wrap: break-word;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .number {
+            background: #e9ecef;
+            color: #333;
+        }
+        .number:hover {
+            background: #dee2e6;
+        }
+        .operator {
+            background: #007bff;
+            color: white;
+        }
+        .operator:hover {
+            background: #0056b3;
+        }
+        .equals {
+            background: #28a745;
+            color: white;
+            grid-column: span 2;
+        }
+        .equals:hover {
+            background: #218838;
+        }
+        .clear {
+            background: #dc3545;
+            color: white;
+        }
+        .clear:hover {
+            background: #c82333;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+        .instructions li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <!-- 第一行 -->
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            <button class="operator" onclick="deleteLast()">←</button>
+            
+            <!-- 第二行 -->
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <!-- 第三行 -->
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <!-- 第四行 -->
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('.')">.</button>
+            
+            <!-- 第五行 -->
+            <button class="number" onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
+            <button class="equals" onclick="calculate()" style="grid-column: span 2;">=</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎯 练习目标</h3>
+            <ol>
+                <li>理解变量如何存储当前输入</li>
+                <li>实现数字按钮功能（appendNumber）</li>
+                <li>实现运算符功能（appendOperator）</li>
+                <li>实现计算功能（calculate）</li>
+                <li>添加清空功能（clearDisplay）</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // ========== 在这里完成你的代码 ==========
+        
+        // 提示：需要以下变量来存储状态
+        let currentInput = "0";      // 当前输入的内容
+        let previousInput = "";      // 之前的输入
+        let operator = null;         // 当前运算符
+        let shouldResetDisplay = false;  // 是否需要重置显示
+        
+        // 获取显示元素
+        let display = document.getElementById("display");
+        
+        // 功能 1：添加数字
+        function appendNumber(num) {
+            // 如果当前显示的是 0 或者需要重置显示，就替换掉
+            if (currentInput === "0" || shouldResetDisplay) {
+                currentInput = num;
+                shouldResetDisplay = false;
+            } else {
+                // 否则追加数字
+                currentInput += num;
+            }
+            
+            updateDisplay();
+        }
+        
+        // 功能 2：添加运算符
+        function appendOperator(op) {
+            // 如果已经有运算符等待计算，先计算之前的结果
+            if (operator !== null && !shouldResetDisplay) {
+                calculate();
+            }
+            
+            // 保存当前状态和运算符
+            previousInput = currentInput;
+            operator = op;
+            shouldResetDisplay = true;
+        }
+        
+        // 功能 3：计算结果
+        function calculate() {
+            // 如果没有运算符或不满足计算条件，直接返回
+            if (operator === null || previousInput === "") {
+                return;
+            }
+            
+            // 将字符串转换为数字
+            let prev = parseFloat(previousInput);
+            let current = parseFloat(currentInput);
+            let result;
+            
+            // 根据运算符执行计算
+            switch (operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        alert("不能除以0！");
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            // 显示结果
+            currentInput = result.toString();
+            operator = null;
+            previousInput = "";
+            shouldResetDisplay = true;
+            
+            updateDisplay();
+        }
+        
+        // 功能 4：清空显示
+        function clearDisplay() {
+            currentInput = "0";
+            previousInput = "";
+            operator = null;
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+        
+        // 功能 5：删除最后一个字符
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = "0";
+            }
+            updateDisplay();
+        }
+        
+        // 更新显示
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+        
+        // =========================================
+    </script>
+</body>
+</html>

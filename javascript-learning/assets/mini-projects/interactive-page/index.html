@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互式网页 - 个人名片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 编辑区域 */
+        .editor {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .editor h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .color-option:hover,
+        .color-option.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+        
+        /* 预览区域 */
+        .preview {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .preview h2 {
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            background: #667eea;
+        }
+        .card-title h3 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .card-title p {
+            color: #666;
+            font-size: 16px;
+        }
+        .card-body {
+            color: #555;
+            line-height: 1.6;
+        }
+        .card-body p {
+            margin-bottom: 10px;
+        }
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .skill-tag {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
+            background: #667eea;
+        }
+        .card-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+        }
+        .contact-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            background: #667eea;
+        }
+        .contact-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        /* 说明区域 */
+        .instructions {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+        }
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧：编辑区 -->
+        <div class="editor">
+            <h2>✏️ 编辑名片</h2>
+            
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" id="nameInput" placeholder="输入姓名" value="张三">
+            </div>
+            
+            <div class="form-group">
+                <label>职位</label>
+                <input type="text" id="titleInput" placeholder="输入职位" value="前端开发工程师">
+            </div>
+            
+            <div class="form-group">
+                <label>个人简介</label>
+                <textarea id="bioInput" placeholder="输入个人简介">热爱编程，专注于Web前端开发。喜欢探索新技术，追求用户体验的极致。</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>技能标签（用逗号分隔）</label>
+                <input type="text" id="skillsInput" placeholder="例如：HTML, CSS, JavaScript" value="HTML, CSS, JavaScript, Vue">
+            </div>
+            
+            <div class="form-group">
+                <label>主题颜色</label>
+                <div class="color-picker">
+                    <div class="color-option active" style="background: #667eea" data-color="#667eea" onclick="setTheme(this)"></div>
+                    <div class="color-option" style="background: #f093fb" data-color="#f093fb" onclick="setTheme(this)"></div>
+                    <div class="color-option" style="background: #4facfe" data-color="#4facfe" onclick="setTheme(this)"></div>
+                    <div class="color-option" style="background: #43e97b" data-color="#43e97b" onclick="setTheme(this)"></div>
+                    <div class="color-option" style="background: #fa709a" data-color="#fa709a" onclick="setTheme(this)"></div>
+                    <div class="color-option" style="background: #ff0844" data-color="#ff0844" onclick="setTheme(this)"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧：预览区 -->
+        <div class="preview">
+            <h2>👀 实时预览</h2>
+            
+            <div class="card" id="card">
+                <div class="card-header">
+                    <div class="avatar" id="avatar">张</div>
+                    <div class="card-title">
+                        <h3 id="cardName">张三</h3>
+                        <p id="cardTitle">前端开发工程师</p>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <p id="cardBio">热爱编程，专注于Web前端开发。喜欢探索新技术，追求用户体验的极致。</p>
+                    <div class="skills" id="cardSkills">
+                        <span class="skill-tag">HTML</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Vue</span>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="contact-btn" onclick="showContact()">联系我</button>
+                    <button class="contact-btn" style="background: #333" onclick="downloadCard()">保存名片</button>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>🎯 练习目标</h3>
+                <ol>
+                    <li>实现实时预览：输入框内容变化时，名片实时更新</li>
+                    <li>实现头像生成：根据姓名第一个字生成头像</li>
+                    <li>实现技能标签解析：将逗号分隔的字符串转换为标签</li>
+                    <li>实现主题切换：点击颜色选项改变名片主题色</li>
+                    <li>实现"联系我"按钮：点击显示联系方式（可用 alert 或弹窗）</li>
+                    <li>（进阶）实现"保存名片"：将名片导出为图片</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 在这里完成你的代码 ==========
+        
+        // 当前主题色
+        let currentTheme = '#667eea';
+        
+        // 获取 DOM 元素
+        let nameInput = document.getElementById("nameInput");
+        let titleInput = document.getElementById("titleInput");
+        let bioInput = document.getElementById("bioInput");
+        let skillsInput = document.getElementById("skillsInput");
+        
+        let cardName = document.getElementById("cardName");
+        let cardTitle = document.getElementById("cardTitle");
+        let cardBio = document.getElementById("cardBio");
+        let cardSkills = document.getElementById("cardSkills");
+        let avatar = document.getElementById("avatar");
+        
+        // 页面加载完成后初始化
+        document.addEventListener("DOMContentLoaded", function() {
+            // 绑定输入事件，实现实时预览
+            nameInput.addEventListener("input", updateCard);
+            titleInput.addEventListener("input", updateCard);
+            bioInput.addEventListener("input", updateCard);
+            skillsInput.addEventListener("input", updateCard);
+            
+            // 初始化卡片
+            updateCard();
+        });
+        
+        // 功能 1：更新名片内容
+        function updateCard() {
+            // 获取输入值
+            let name = nameInput.value.trim() || "姓名";
+            let title = titleInput.value.trim() || "职位";
+            let bio = bioInput.value.trim() || "个人简介";
+            let skillsText = skillsInput.value.trim();
+            
+            // 更新名片显示
+            cardName.textContent = name;
+            cardTitle.textContent = title;
+            cardBio.textContent = bio;
+            
+            // 更新头像（取名字的第一个字）
+            avatar.textContent = name.charAt(0);
+            
+            // 解析并更新技能标签
+            updateSkills(skillsText);
+        }
+        
+        // 功能 2：更新技能标签
+        function updateSkills(skillsText) {
+            // 清空现有标签
+            cardSkills.innerHTML = "";
+            
+            if (skillsText === "") {
+                return;
+            }
+            
+            // 按逗号分割技能字符串
+            let skills = skillsText.split(",");
+            
+            // 为每个技能创建标签
+            skills.forEach(function(skill) {
+                skill = skill.trim();
+                if (skill !== "") {
+                    let tag = document.createElement("span");
+                    tag.className = "skill-tag";
+                    tag.textContent = skill;
+                    cardSkills.appendChild(tag);
+                }
+            });
+        }
+        
+        // 功能 3：设置主题颜色
+        function setTheme(element) {
+            // 获取颜色值
+            currentTheme = element.getAttribute("data-color");
+            
+            // 更新颜色选择器的选中状态
+            let colorOptions = document.querySelectorAll(".color-option");
+            colorOptions.forEach(function(option) {
+                option.classList.remove("active");
+            });
+            element.classList.add("active");
+            
+            // 应用主题色到名片
+            applyTheme(currentTheme);
+        }
+        
+        // 应用主题色
+        function applyTheme(color) {
+            // 更新头像背景色
+            avatar.style.backgroundColor = color;
+            
+            // 更新技能标签背景色
+            let skillTags = document.querySelectorAll(".skill-tag");
+            skillTags.forEach(function(tag) {
+                tag.style.backgroundColor = color;
+            });
+            
+            // 更新按钮背景色
+            let contactBtns = document.querySelectorAll(".contact-btn");
+            contactBtns[0].style.backgroundColor = color;  // "联系我"按钮
+        }
+        
+        // 功能 4：显示联系方式
+        function showContact() {
+            let name = nameInput.value.trim() || "我";
+            alert(`你好！我是${name}。\n\n📧 邮箱: example@email.com\n📱 电话: 138-xxxx-xxxx\n\n期待与你的合作！`);
+        }
+        
+        // 功能 5：保存名片（简化版）
+        function downloadCard() {
+            // 提示用户
+            alert("保存功能提示：\n\n在实际项目中，可以使用 html2canvas 库将 DOM 元素转换为图片下载。\n\n学习资源：搜索 'html2canvas 使用教程'");
+            
+            // 实际实现代码（需要引入 html2canvas 库）：
+            /*
+            html2canvas(document.getElementById("card")).then(canvas => {
+                let link = document.createElement("a");
+                link.download = "我的名片.png";
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+            */
+        }
+        
+        // 监听技能输入，确保新添加的技能标签也有正确的颜色
+        skillsInput.addEventListener("input", function() {
+            applyTheme(currentTheme);
+        });
+        
+        // =========================================
+    </script>
+</body>
+</html>

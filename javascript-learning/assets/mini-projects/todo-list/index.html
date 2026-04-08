@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项列表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .stats {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #todoInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #todoInput:focus {
+            outline: none;
+            border-color: #84fab0;
+        }
+        #addBtn {
+            padding: 12px 25px;
+            background: #84fab0;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        #addBtn:hover {
+            background: #5ce1a9;
+            transform: translateY(-2px);
+        }
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background: #84fab0;
+            border-color: #84fab0;
+            color: #333;
+        }
+        #todoList {
+            list-style: none;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        .todo-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .delete-btn:hover {
+            background: #ee5a5a;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 待办事项</h1>
+        <p class="stats">
+            总计: <span id="totalCount">0</span> | 
+            已完成: <span id="completedCount">0</span> | 
+            待完成: <span id="pendingCount">0</span>
+        </p>
+        
+        <div class="input-area">
+            <input type="text" id="todoInput" placeholder="输入待办事项，按回车或点击添加">
+            <button id="addBtn">添加</button>
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+            <button class="filter-btn" onclick="setFilter('active')">待完成</button>
+            <button class="filter-btn" onclick="setFilter('completed')">已完成</button>
+        </div>
+        
+        <ul id="todoList">
+            <!-- 待办事项会动态添加到这里 -->
+        </ul>
+        
+        <div class="instructions">
+            <h3>🎯 练习目标</h3>
+            <ol>
+                <li>实现添加待办事项功能（支持回车和点击按钮）</li>
+                <li>实现删除待办事项功能</li>
+                <li>实现标记完成/未完成功能（点击复选框）</li>
+                <li>实现筛选功能（全部/待完成/已完成）</li>
+                <li>更新统计信息（总计/已完成/待完成）</li>
+                <li>（进阶）实现本地存储，刷新页面后不丢失数据</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // ========== 在这里完成你的代码 ==========
+        
+        // 提示：需要以下变量和数据结构
+        let todos = [];              // 存储所有待办事项
+        let currentFilter = 'all';   // 当前筛选状态
+        
+        // 获取 DOM 元素
+        let todoInput = document.getElementById("todoInput");
+        let addBtn = document.getElementById("addBtn");
+        let todoList = document.getElementById("todoList");
+        let totalCount = document.getElementById("totalCount");
+        let completedCount = document.getElementById("completedCount");
+        let pendingCount = document.getElementById("pendingCount");
+        
+        // 页面加载完成后初始化
+        document.addEventListener("DOMContentLoaded", function() {
+            // 绑定添加按钮事件
+            addBtn.addEventListener("click", addTodo);
+            
+            // 绑定回车键事件
+            todoInput.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    addTodo();
+                }
+            });
+        });
+        
+        // 功能 1：添加待办事项
+        function addTodo() {
+            let text = todoInput.value.trim();
+            
+            // 验证输入不为空
+            if (text === "") {
+                alert("请输入待办事项！");
+                return;
+            }
+            
+            // 创建待办事项对象
+            let todo = {
+                id: Date.now(),      // 使用时间戳作为唯一 ID
+                text: text,
+                completed: false     // 初始状态为未完成
+            };
+            
+            // 添加到数组
+            todos.push(todo);
+            
+            // 清空输入框
+            todoInput.value = "";
+            
+            // 重新渲染列表
+            renderTodos();
+        }
+        
+        // 功能 2：删除待办事项
+        function deleteTodo(id) {
+            // 找到并删除指定 id 的待办事项
+            todos = todos.filter(function(todo) {
+                return todo.id !== id;
+            });
+            
+            renderTodos();
+        }
+        
+        // 功能 3：切换完成状态
+        function toggleTodo(id) {
+            // 找到对应的待办事项并切换状态
+            todos = todos.map(function(todo) {
+                if (todo.id === id) {
+                    return {
+                        ...todo,
+                        completed: !todo.completed
+                    };
+                }
+                return todo;
+            });
+            
+            renderTodos();
+        }
+        
+        // 功能 4：设置筛选条件
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // 更新按钮样式
+            let buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderTodos();
+        }
+        
+        // 功能 5：渲染待办列表
+        function renderTodos() {
+            // 根据筛选条件过滤待办事项
+            let filteredTodos = todos;
+            
+            if (currentFilter === 'active') {
+                filteredTodos = todos.filter(function(todo) {
+                    return !todo.completed;
+                });
+            } else if (currentFilter === 'completed') {
+                filteredTodos = todos.filter(function(todo) {
+                    return todo.completed;
+                });
+            }
+            
+            // 清空列表
+            todoList.innerHTML = "";
+            
+            // 如果没有待办事项，显示空状态
+            if (filteredTodos.length === 0) {
+                todoList.innerHTML = '<li class="empty-state">暂无待办事项</li>';
+            } else {
+                // 遍历并创建列表项
+                filteredTodos.forEach(function(todo) {
+                    let li = document.createElement("li");
+                    li.className = "todo-item" + (todo.completed ? " completed" : "");
+                    
+                    li.innerHTML = `
+                        <input type="checkbox" class="checkbox" 
+                            ${todo.completed ? 'checked' : ''} 
+                            onchange="toggleTodo(${todo.id})">
+                        <span class="todo-text">${todo.text}</span>
+                        <button class="delete-btn" onclick="deleteTodo(${todo.id})">删除</button>
+                    `;
+                    
+                    todoList.appendChild(li);
+                });
+            }
+            
+            // 更新统计
+            updateStats();
+        }
+        
+        // 功能 6：更新统计信息
+        function updateStats() {
+            let total = todos.length;
+            let completed = todos.filter(function(todo) {
+                return todo.completed;
+            }).length;
+            let pending = total - completed;
+            
+            totalCount.textContent = total;
+            completedCount.textContent = completed;
+            pendingCount.textContent = pending;
+        }
+        
+        // =========================================
+    </script>
+</body>
+</html>
