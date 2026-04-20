@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 基础知识练习</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.8em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 3px solid #3498db;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .icon { font-size: 1.3em; }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .code-block::before {
+            content: 'JS';
+            float: right;
+            color: #7f8c8d;
+            font-size: 0.8em;
+        }
+        
+        .result {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            color: #2e7d32;
+            font-size: 0.9em;
+            display: none;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1b5e20;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 3px;
+            transition: background 0.2s;
+        }
+        
+        button:hover { background: #2980b9; }
+        
+        .interactive-area {
+            background: #fafafa;
+            border: 1px dashed #bdc3c7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        input {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin: 3px;
+            width: 120px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 4px 4px 0;
+            color: #856404;
+            font-size: 0.85em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover { background: #f8f9fa; }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin: 1px;
+        }
+        
+        .badge-blue { background: #d4edda; color: #155724; }
+        .badge-green { background: #d1ecf1; color: #0c5460; }
+        .badge-yellow { background: #fff3cd; color: #856404; }
+        
+        hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        p, li { font-size: 0.9em; margin: 6px 0; }
+        
+        h3 {
+            font-size: 1em;
+            color: #34495e;
+            margin: 12px 0 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JavaScript 基础知识练习</h1>
+        <p class="subtitle">变量定义、变量类型、表达式、流程控制、函数</p>
+        
+        <!-- 1. 变量的定义 -->
+        <div class="card">
+            <h2><span class="icon">📦</span> 一、变量的定义</h2>
+            <p>三种声明方式：<span class="highlight">var</span>、<span class="highlight">let</span>、<span class="highlight">const</span></p>
+            
+            <div class="code-block">// var：函数作用域，可重复声明
+var name = "张三";
+var name = "李四"; // 不报错
+
+// let：块级作用域，不可重复声明
+let age = 20;
+age = 21;     // 可重新赋值
+
+// const：块级作用域，常量不可重新赋值
+const PI = 3.14159;</div>
+            
+            <div class="note">优先使用 const，需要重新赋值时用 let，避免使用 var</div>
+            
+            <div class="interactive-area">
+                <button onclick="testVar()">运行变量示例</button>
+                <div id="varResult" class="result">
+                    <div class="result-title">运行结果：</div>
+                    <div id="varOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2. 变量类型 -->
+        <div class="card">
+            <h2><span class="icon">🔢</span> 二、变量类型</h2>
+            <p>JavaScript 是动态类型语言，typeof 检测结果如下：</p>
+            
+            <table>
+                <tr><th>类型</th><th>示例</th><th>typeof</th></tr>
+                <tr><td><span class="badge badge-blue">Number</span></td><td>42, 3.14, NaN</td><td>"number"</td></tr>
+                <tr><td><span class="badge badge-blue">String</span></td><td>"hello", 'world'</td><td>"string"</td></tr>
+                <tr><td><span class="badge badge-blue">Boolean</span></td><td>true, false</td><td>"boolean"</td></tr>
+                <tr><td><span class="badge badge-blue">Undefined</span></td><td>let x;</td><td>"undefined"</td></tr>
+                <tr><td><span class="badge badge-blue">Null</span></td><td>let y = null;</td><td>"object"（bug）</td></tr>
+                <tr><td><span class="badge badge-blue">Symbol</span></td><td>Symbol('desc')</td><td>"symbol"</td></tr>
+                <tr><td><span class="badge badge-green">BigInt</span></td><td>123n</td><td>"bigint"</td></tr>
+                <tr><td><span class="badge badge-green">Object</span></td><td>{}, [], function(){}</td><td>"object"/"function"</td></tr>
+            </table>
+            
+            <div class="code-block">// 基本类型
+let num = 100, str = "JS", bool = true;
+let empty = null, notDefined;
+let sym = Symbol("test"), big = 9007199254740991n;
+
+// 引用类型
+let obj = { name: "对象" };
+let arr = [1, 2, 3];
+let fn = function() {};
+
+// 类型检测
+console.log(typeof num);  // "number"
+console.log(typeof arr);  // "object"（数组是对象）
+console.log(typeof fn);   // "function"</div>
+            
+            <div class="interactive-area">
+                <button onclick="testTypes()">检测类型</button>
+                <div id="typeResult" class="result">
+                    <div class="result-title">检测结果：</div>
+                    <div id="typeOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. 表达式 -->
+        <div class="card">
+            <h2><span class="icon">🧮</span> 三、表达式</h2>
+            
+            <h3>3.1 算术表达式</h3>
+            <div class="code-block">let a = 10, b = 3;
+a + b    // 13
+a - b    // 7
+a * b    // 30
+a / b    // 3.333...
+a % b    // 1（取模）
+a ** b   // 1000（幂运算）
+
+let c = 5;
+c++;     // 后置自增，返回5，c变6
+++c;     // 前置自增，返回7，c变7</div>
+            
+            <h3>3.2 比较表达式</h3>
+            <div class="code-block">5 == "5"     // true（类型转换）
+5 === "5"    // false（严格相等）
+10 > 5       // true
+null == undefined     // true
+null === undefined    // false
+NaN == NaN            // false</div>
+            
+            <h3>3.3 逻辑表达式</h3>
+            <div class="code-block">true && false    // false（逻辑与）
+true || false    // true（逻辑或）
+!true            // false（逻辑非）
+
+// 短路求值
+let x = null;
+x || "默认值"     // "默认值"
+x && x.name      // null（不报错）
+
+// 假值：false, 0, "", null, undefined, NaN</div>
+            
+            <div class="interactive-area">
+                <button onclick="testExpr()">运行表达式</button>
+                <div id="exprResult" class="result">
+                    <div class="result-title">计算结果：</div>
+                    <div id="exprOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 4. 流程控制 -->
+        <div class="card">
+            <h2><span class="icon">🔄</span> 四、流程控制</h2>
+            
+            <h3>4.1 条件语句</h3>
+            <div class="code-block">// if...else
+let score = 85;
+if (score >= 90) {
+    console.log("优秀");
+} else if (score >= 80) {
+    console.log("良好");  // 输出
+} else {
+    console.log("不及格");
+}
+
+// 三元运算符
+let pass = score >= 60 ? "及格" : "不及格";
+
+// switch
+switch (day) {
+    case 1: dayName = "周一"; break;
+    case 2: dayName = "周二"; break;
+    default: dayName = "其他";
+}</div>
+            
+            <h3>4.2 循环语句</h3>
+            <div class="code-block">// for 循环
+for (let i = 0; i < 5; i++) {
+    console.log(i);  // 0,1,2,3,4
+}
+
+// while 循环
+let count = 0;
+while (count < 3) {
+    console.log(count++);
+}
+
+// do...while（至少执行一次）
+do { console.log(num++); } while (num < 0);
+
+// for...of（遍历数组）
+for (let item of [1, 2, 3]) { console.log(item); }
+
+// 循环控制
+if (i === 3) continue;  // 跳过
+if (i === 7) break;     // 终止</div>
+            
+            <div class="interactive-area">
+                <p>输入分数（0-100）：<input type="number" id="scoreInput" min="0" max="100" placeholder="分数">
+                <button onclick="checkGrade()">评定等级</button></p>
+                <div id="gradeResult" class="result">
+                    <div class="result-title">评定结果：</div>
+                    <div id="gradeOutput"></div>
+                </div>
+                
+                <hr>
+                
+                <p>输入数字计算阶乘：<input type="number" id="factInput" min="0" max="20" placeholder="数字">
+                <button onclick="calcFactorial()">计算</button></p>
+                <div id="factResult" class="result">
+                    <div class="result-title">阶乘结果：</div>
+                    <div id="factOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. 函数 -->
+        <div class="card">
+            <h2><span class="icon">⚙️</span> 五、函数</h2>
+            
+            <h3>5.1 函数声明方式</h3>
+            <div class="code-block">// 函数声明（可提升）
+function greet(name) {
+    return "你好，" + name;
+}
+
+// 函数表达式（无提升）
+const sayHello = function(name) {
+    return "Hello, " + name;
+};
+
+// 箭头函数（ES6）
+const add = (a, b) => a + b;
+const square = x => x * x;
+
+// 立即执行函数
+(function() { console.log("立即执行"); })();</div>
+            
+            <h3>5.2 参数与返回值</h3>
+            <div class="code-block">// 默认参数
+function multiply(a, b = 1) {
+    return a * b;
+}
+
+// 剩余参数
+function sum(...nums) {
+    return nums.reduce((t, n) => t + n, 0);
+}
+sum(1, 2, 3, 4);  // 10
+
+// 解构参数
+function print({ name, age }) {
+    console.log(name + "，" + age + "岁");
+}</div>
+            
+            <h3>5.3 闭包</h3>
+            <div class="code-block">// 闭包：函数记住并访问其词法作用域
+function createCounter() {
+    let count = 0;
+    return function() {
+        return ++count;
+    };
+}
+
+const counter = createCounter();
+counter();  // 1
+counter();  // 2（保留状态）</div>
+            
+            <div class="interactive-area">
+                <p>输入两个数字：<input type="number" id="num1" placeholder="数字1">
+                <input type="number" id="num2" placeholder="数字2"></p>
+                <button onclick="testAdd()">加法</button>
+                <button onclick="testMax()">最大值</button>
+                <button onclick="testClosure()">闭包计数器</button>
+                <div id="funcResult" class="result">
+                    <div class="result-title">函数结果：</div>
+                    <div id="funcOutput"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 工具函数
+        function showResult(resultId, outputId, content) {
+            document.getElementById(resultId).style.display = "block";
+            document.getElementById(outputId).innerHTML = content;
+        }
+        
+        // 一、变量定义
+        function testVar() {
+            let out = [];
+            
+            var varName = "使用 var";
+            var varName = "var 可重复声明";
+            out.push("var: " + varName);
+            
+            let letAge = 20;
+            letAge = 21;
+            out.push("let: " + letAge);
+            
+            const PI = 3.14159;
+            out.push("const: PI = " + PI);
+            
+            if (true) {
+                var varBlock = "var 跨块级";
+                let letBlock = "let 块级";
+            }
+            out.push("块级外 var: " + varBlock);
+            
+            showResult("varResult", "varOutput", out.join("<br>"));
+        }
+        
+        // 二、变量类型
+        function testTypes() {
+            let out = [];
+            
+            let num = 42, str = "JS", bool = true;
+            let undef, nul = null;
+            
+            out.push("typeof 42: " + typeof num);
+            out.push("typeof 'JS': " + typeof str);
+            out.push("typeof true: " + typeof bool);
+            out.push("typeof undefined: " + typeof undef);
+            out.push("typeof null: " + typeof nul + "（历史bug）");
+            
+            let arr = [1, 2, 3], fn = function() {};
+            out.push("typeof []: " + typeof arr + "（数组是对象）");
+            out.push("typeof function: " + typeof fn);
+            
+            out.push("<br><strong>类型转换：</strong>");
+            out.push('"5" == 5: ' + ("5" == 5));
+            out.push('"5" === 5: ' + ("5" === 5));
+            
+            showResult("typeResult", "typeOutput", out.join("<br>"));
+        }
+        
+        // 三、表达式
+        function testExpr() {
+            let out = [];
+            let a = 10, b = 3;
+            
+            out.push("<strong>算术：</strong>");
+            out.push("10 + 3 = " + (a + b));
+            out.push("10 - 3 = " + (a - b));
+            out.push("10 * 3 = " + (a * b));
+            out.push("10 / 3 = " + (a / b).toFixed(2));
+            out.push("10 % 3 = " + (a % b));
+            out.push("10 ** 3 = " + (a ** b));
+            
+            let c = 5;
+            out.push("<br><strong>自增：</strong>");
+            out.push("c++ (c=5): 返回" + (c++) + ", c变为" + c);
+            out.push("++c (c=6): 返回" + (++c) + ", c变为" + c);
+            
+            out.push("<br><strong>比较：</strong>");
+            out.push('5 == "5": ' + (5 == "5"));
+            out.push('5 === "5": ' + (5 === "5"));
+            out.push("null == undefined: " + (null == undefined));
+            
+            out.push("<br><strong>逻辑：</strong>");
+            out.push("true && false: " + (true && false));
+            out.push("true || false: " + (true || false));
+            out.push('0 || "默认值": ' + (0 || "默认值"));
+            
+            showResult("exprResult", "exprOutput", out.join("<br>"));
+        }
+        
+        // 四、流程控制
+        function checkGrade() {
+            let score = parseInt(document.getElementById("scoreInput").value);
+            let out = [];
+            
+            if (isNaN(score) || score < 0 || score > 100) {
+                out.push("请输入 0-100 的分数");
+            } else {
+                out.push("分数: " + score);
+                
+                let grade;
+                if (score >= 90) grade = "优秀(A)";
+                else if (score >= 80) grade = "良好(B)";
+                else if (score >= 70) grade = "中等(C)";
+                else if (score >= 60) grade = "及格(D)";
+                else grade = "不及格(F)";
+                out.push("if评定: " + grade);
+                
+                out.push("三元运算: " + (score >= 60 ? "通过" : "未通过"));
+                
+                let level = Math.floor(score / 10);
+                let sg;
+                switch (level) {
+                    case 10: case 9: sg = "A"; break;
+                    case 8: sg = "B"; break;
+                    case 7: sg = "C"; break;
+                    case 6: sg = "D"; break;
+                    default: sg = "F";
+                }
+                out.push("switch评定: " + sg);
+            }
+            
+            showResult("gradeResult", "gradeOutput", out.join("<br>"));
+        }
+        
+        function calcFactorial() {
+            let n = parseInt(document.getElementById("factInput").value);
+            let out = [];
+            
+            if (isNaN(n) || n < 0 || n > 20) {
+                out.push("请输入 0-20 的整数");
+            } else {
+                let res = 1, steps = [];
+                for (let i = 1; i <= n; i++) {
+                    res *= i;
+                    steps.push(i);
+                }
+                out.push(n + "! = " + steps.join(" × "));
+                out.push("结果: " + res);
+            }
+            
+            showResult("factResult", "factOutput", out.join("<br>"));
+        }
+        
+        // 五、函数
+        const add = (a, b) => a + b;
+        
+        function getMax(a, b) {
+            return a > b ? a : b;
+        }
+        
+        function createCounter() {
+            let count = 0;
+            return function() { return ++count; };
+        }
+        
+        let globalCounter = null;
+        
+        function testAdd() {
+            let n1 = parseFloat(document.getElementById("num1").value);
+            let n2 = parseFloat(document.getElementById("num2").value);
+            let out = [];
+            
+            if (isNaN(n1) || isNaN(n2)) {
+                out.push("请输入两个数字");
+            } else {
+                out.push("add(" + n1 + ", " + n2 + ") = " + add(n1, n2));
+                
+                const multiply = (a, b = 2) => a * b;
+                out.push("multiply(" + n1 + ") = " + multiply(n1));
+                
+                const sumAll = (...n) => n.reduce((s, v) => s + v, 0);
+                out.push("sumAll(" + n1 + "," + n2 + ",10) = " + sumAll(n1, n2, 10));
+            }
+            
+            showResult("funcResult", "funcOutput", out.join("<br>"));
+        }
+        
+        function testMax() {
+            let n1 = parseFloat(document.getElementById("num1").value);
+            let n2 = parseFloat(document.getElementById("num2").value);
+            let out = [];
+            
+            if (isNaN(n1) || isNaN(n2)) {
+                out.push("请输入两个数字");
+            } else {
+                out.push("getMax(" + n1 + ", " + n2 + ") = " + getMax(n1, n2));
+                
+                const getMin = function(a, b) { return a < b ? a : b; };
+                out.push("getMin(" + n1 + ", " + n2 + ") = " + getMin(n1, n2));
+            }
+            
+            showResult("funcResult", "funcOutput", out.join("<br>"));
+        }
+        
+        function testClosure() {
+            let out = [];
+            
+            if (!globalCounter) {
+                globalCounter = createCounter();
+                out.push("创建计数器");
+            }
+            
+            out.push("调用1: " + globalCounter());
+            out.push("调用2: " + globalCounter());
+            out.push("调用3: " + globalCounter());
+            out.push("<em>闭包保留了状态</em>");
+            
+            let newCounter = createCounter();
+            out.push("<br>新计数器1: " + newCounter());
+            out.push("原计数器4: " + globalCounter());
+            out.push("<em>两个计数器互相独立</em>");
+            
+            showResult("funcResult", "funcOutput", out.join("<br>"));
+        }
+        
+        // 控制台输出
+        console.log("JS基础练习页面加载完成");
+    </script>
+</body>
+</html>
